@@ -233,7 +233,7 @@ You have successfully:
 
 ## Related Demo
 
-The companion guide shows how to create a VM using [**OpenShift Virtualization**](https://docs.turtini.com/projects/openshift-vm-demo/en/latest/).
+The companion guide shows how to create a VM using [**OpenShift Virtualization**]([https://docs.turtini.com/projects/openshift-vm-demo/en/latest/](https://docs.turtini.com/projects/openshift-vm-demo/en/latest/README.html)).
 
 This demonstrates the difference between:
 
