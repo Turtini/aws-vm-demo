@@ -225,6 +225,7 @@ You have successfully:
 * Created a virtual machine in AWS
 * Configured networking and access
 * Connected to the instance
+* Completed housekeeping after you ran your demo
 
 ---
 
