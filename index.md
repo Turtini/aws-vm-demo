@@ -1,5 +1,6 @@
 # AWS EC2 VM Creation Demo
 
-```{contents}
-:local:
-:depth: 2
+```{toctree}
+:maxdepth: 2
+
+README
