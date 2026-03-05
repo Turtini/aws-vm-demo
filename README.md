@@ -1,4 +1,4 @@
-# AWS VM Creation Demo
+# AWS EC2 VM Creation Demo
 
 This guide walks through the process of creating a virtual machine (EC2 instance) in Amazon Web Services.
 
