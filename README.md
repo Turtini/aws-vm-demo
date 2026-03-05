@@ -229,6 +229,8 @@ You have successfully:
 * Connected to the instance
 * Completed housekeeping after you ran your demo
 
+![AWSvKubernetes](_static/aws-kubernetes-vm.png)
+
 ---
 
 ## Related Demo
