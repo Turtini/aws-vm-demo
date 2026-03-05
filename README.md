@@ -54,6 +54,7 @@ Security Group + Networking
 ```
 EC2
 ```
+4. Click EC2
 
 You should now see the EC2 dashboard.
 
@@ -67,7 +68,7 @@ You should now see the EC2 dashboard.
 Example:
 
 ```
-demo-vm
+demo-ec2-vm
 ```
 
 ---
@@ -106,6 +107,18 @@ Example:
 
 ```
 demo-key.pem
+```
+
+Key type:
+
+```
+RSA
+```
+
+Format:
+
+```
+.pem
 ```
 
 Download and store this key securely.
