@@ -49,7 +49,11 @@ Security Group + Networking
 
 1. Open the AWS Console at https://console.aws.amazon.com
 2. Sign in with your AWS account credentials
-3. From the **Services** menu select **EC2**
+3. From the **Services** menu select **EC2** or in the search bar type:
+
+```
+EC2
+```
 
 You should now see the EC2 dashboard.
 
