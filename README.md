@@ -103,10 +103,10 @@ This instance type is commonly included in the AWS free tier.
 
 Create or select an SSH key pair.
 
-Example:
+Name:
 
 ```
-demo-key.pem
+aws-vm-demo-key.pem
 ```
 
 Key type:
@@ -137,6 +137,12 @@ Recommended settings:
 
 This creates the necessary **security group rules** to allow access to the VM.
 
+The default storage settings are fine:
+
+```
+8 GB pg3
+```
+
 ---
 
 ## Step 7 — Launch the Instance
@@ -153,7 +159,7 @@ Provisioning typically takes **30–60 seconds**.
 
 From the EC2 dashboard:
 
-1. Select the instance
+1. Select the instance "aws-vm-demo-key.pem"
 2. Click **Connect**
 3. Use either:
 
@@ -163,7 +169,13 @@ From the EC2 dashboard:
 Example SSH command:
 
 ```
-ssh -i demo-key.pem ec2-user@<public-ip-address>
+ssh -i aws-vm-demo-key.pem ec2-user@INSTANCE_PUBLIC_IP
+```
+
+Example:
+
+```
+ssh -i aws-vm-demo-key.pem ec2-user@54.191.10.25
 ```
 
 ---
@@ -177,6 +189,32 @@ uname -a
 ```
 
 This confirms the virtual machine is running and accessible.
+
+Review your OS information by running:
+
+```
+cat /etc/os-release
+```
+
+## Step 10 — Stop or Terminate your VM
+
+To avoid charges, from the AWS Console, access the EC2 dashboard again.
+
+1. Open the AWS Console at https://console.aws.amazon.com
+2. Sign in with your AWS account credentials
+3. From the **Services** menu select **EC2** or in the search bar type:
+
+```
+EC2
+```
+4. Click EC2
+
+You should now see the EC2 dashboard.
+
+5. Select **Instances**
+
+6. Select **Instant State** and select Stop or Terminate. This stops or terminates the VM.
+
 
 ---
 
