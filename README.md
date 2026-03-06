@@ -168,8 +168,10 @@ Provisioning typically takes **30–60 seconds**.
 
 From the EC2 dashboard:
 
-1. Select the instance "demo-ec2-vm"
-2. Click **Connect**
+1. Click **Connect to your instance**
+
+![aws-ec2-instance-launch-success](_static/aws-ec2-instance-launch-success.png)
+
 3. Use either:
 
    * EC2 Instance Connect
