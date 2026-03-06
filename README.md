@@ -70,7 +70,7 @@ You should now see the EC2 dashboard.
 
 ![aws-ec2-launch-instance](_static/aws-ec2-launch-instance.png)
 
-2. Click Launch without a wakthrough
+2. Click **Launch without a wakthrough**
 
 ![aws-ec2-launch-without-walkthrough](_static/aws-ec2-launch-without-walkthrough.png)
 
@@ -82,21 +82,13 @@ Example:
 demo-ec2-vm
 ```
 
----
+4. Select **Red Hat** under Application and OS Images (Amazon Machine Image) or AMI.
 
-## Step 3 — Choose an Operating System
-
-Select an Amazon Machine Image (AMI).
-
-Recommended for this demo:
-
-* **Amazon Linux 2023**
-* **Red Hat Enterprise Linux**
-* **Ubuntu Server**
+![aws-ec2-name-ami](_static/aws-ec2-name-ami.png)
 
 ---
 
-## Step 4 — Choose Instance Type
+## Step 3 — Choose Instance Type
 
 Select a small instance type for the demo.
 
@@ -110,7 +102,7 @@ This instance type is commonly included in the AWS free tier.
 
 ---
 
-## Step 5 — Configure Access
+## Step 4 — Configure Access
 
 Create or select an SSH key pair.
 
@@ -136,7 +128,7 @@ Download and store this key securely.
 
 ---
 
-## Step 6 — Configure Networking
+## Step 5 — Configure Networking
 
 Use the default VPC settings for the demo.
 
@@ -156,7 +148,7 @@ The default storage settings are fine:
 
 ---
 
-## Step 7 — Launch the Instance
+## Step 6 — Launch the Instance
 
 Click **Launch Instance**.
 
@@ -166,7 +158,7 @@ Provisioning typically takes **30–60 seconds**.
 
 ---
 
-## Step 8 — Connect to the VM
+## Step 7 — Connect to the VM
 
 From the EC2 dashboard:
 
@@ -191,7 +183,7 @@ ssh -i aws-vm-demo-key.pem ec2-user@54.191.10.25
 
 ---
 
-## Step 9 — Verify the VM
+## Step 8 — Verify the VM
 
 Once connected, run:
 
@@ -207,7 +199,7 @@ Review your OS information by running:
 cat /etc/os-release
 ```
 
-## Step 10 — Stop or Terminate your VM
+## Step 9 — Stop or Terminate your VM
 
 To avoid charges, from the AWS Console, access the EC2 dashboard again.
 
