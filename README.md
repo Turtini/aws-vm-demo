@@ -170,7 +170,7 @@ From the EC2 dashboard:
 
 1. Click **Connect to your instance**
 
-![aws-ec2-instance-launch-success](_static/aws-ec2-instance-launch-success.png)
+![aws-ec2-connect-to-instance](_static/aws-ec2-connect-to-instance.png)
 
 3. Use either:
 
