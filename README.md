@@ -70,6 +70,10 @@ You should now see the EC2 dashboard.
 
 ![aws-ec2-launch-instance](_static/aws-ec2-launch-instance.png)
 
+2. Click Launch without a wakthrough
+
+![aws-ec2-launch-without-walkthrough](_static/aws-ec2-launch-without-walkthrough.png)
+
 3. Provide a name for the instance
 
 Example:
