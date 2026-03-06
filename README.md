@@ -229,6 +229,7 @@ You should now see the EC2 dashboard.
 
 6. Select **Instant State** and select Stop or Terminate. This stops or terminates the VM.
 
+![aws-ec2-terminate-screen](_static/aws-ec2-terminate-screen.png)
 
 ---
 
