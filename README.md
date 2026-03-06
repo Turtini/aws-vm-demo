@@ -126,6 +126,8 @@ Format:
 
 Download and store this key securely.
 
+![aws-ec2-key-pair](_static/aws-ec2-key-pair.png)
+
 ---
 
 ## Step 5 — Configure Networking
