@@ -158,7 +158,7 @@ AWS will begin provisioning the virtual machine.
 
 Provisioning typically takes **30–60 seconds**.
 
-![aws-ec2-launch-instance](_static/aws-ec2-launch-instance.png)
+![aws-ec2-config-launch-instance](_static/aws-ec2-config-launch-instance.png)
 
 ---
 
