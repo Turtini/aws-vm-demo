@@ -160,6 +160,8 @@ Provisioning typically takes **30–60 seconds**.
 
 ![aws-ec2-config-launch-instance](_static/aws-ec2-config-launch-instance.png)
 
+![aws-ec2-instance-launch-success](_static/aws-ec2-instance-launch-success.png)
+
 ---
 
 ## Step 7 — Connect to the VM
