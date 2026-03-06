@@ -58,6 +58,8 @@ EC2
 ```
 4. Click EC2
 
+![aws-ec2-selection](_static/aws-ec2-selection.png)
+
 You should now see the EC2 dashboard.
 
 ---
