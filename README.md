@@ -68,7 +68,7 @@ You should now see the EC2 dashboard.
 
 1. Click **Launch Instance**
 
-![aws-ec2-launch-instance](_static/aws-ec2-launch-instance.png)
+![aws-ec2-start-launch-instance](_static/aws-ec2-start-launch-instance.png)
 
 2. Click **Launch without a wakthrough**
 
