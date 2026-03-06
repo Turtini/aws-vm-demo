@@ -67,7 +67,10 @@ You should now see the EC2 dashboard.
 ## Step 2 — Launch a New Instance
 
 1. Click **Launch Instance**
-2. Provide a name for the instance
+
+![aws-ec2-launch-instance](_static/aws-ec2-launch-instance.png)
+
+3. Provide a name for the instance
 
 Example:
 
