@@ -175,6 +175,9 @@ From the EC2 dashboard:
 3. Use either:
 
    * EC2 Instance Connect
+  
+![aws-ec2-connect-screen](_static/aws-ec2-connect-screen.png)
+
    * SSH from your terminal
 
 Example SSH command:
