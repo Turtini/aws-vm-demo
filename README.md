@@ -136,16 +136,16 @@ Use the default VPC settings for the demo.
 
 Recommended settings:
 
-* Allow SSH access (port 22)
-* Default VPC
-* Default subnet
+*Create security group
+* Allow SSH traffic from anywhere
+* 1 x10 GiB gp3 Root volume, 3000 IOPS, Not encrypted
 
 This creates the necessary **security group rules** to allow access to the VM.
 
 The default storage settings are fine:
 
 ```
-8 GB pg3
+10 GiB pg3
 ```
 
 ---
@@ -157,6 +157,8 @@ Click **Launch Instance**.
 AWS will begin provisioning the virtual machine.
 
 Provisioning typically takes **30–60 seconds**.
+
+![aws-ec2-launch-instance](_static/aws-ec2-launch-instance.png)
 
 ---
 
