@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Turtini Training Loop EC2 Demo
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t3.micro
+    AllowedValues:
+      - t3.micro
+      - t3.small
+      - t3.medium
+    Description: EC2 instance type for the demo
+
+Resources:
+
+  TurtiniDemoInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0c02fb55956c7d316
+      InstanceType: !Ref InstanceType
+
+      Tags:
+        - Key: Name
+          Value: turtini-demo-vm
+        - Key: Project
+          Value: TurtiniTraining
+        - Key: Environment
+          Value: Demo
+
+Outputs:
+
+  InstanceId:
+    Description: Instance ID
+    Value: !Ref TurtiniDemoInstance
+
+  AvailabilityZone:
+    Description: AZ
+    Value: !GetAtt TurtiniDemoInstance.AvailabilityZone
