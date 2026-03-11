@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Turtini Training Loop EC2 Demo with auto-terminate
+Description: Turtini Training Loop EC2 Demo with automatic stack deletion
 
 Parameters:
   InstanceType:
@@ -9,25 +9,205 @@ Parameters:
       - t3.micro
       - t3.small
       - t3.medium
+    Description: EC2 instance type for the demo
 
-  AutoTerminateMinutes:
+  AutoDeleteHours:
     Type: Number
-    Default: 240
-    MinValue: 30
-    MaxValue: 1440
-    Description: Minutes before the demo instance shuts down and terminates itself
+    Default: 4
+    MinValue: 1
+    MaxValue: 72
+    Description: Hours after stack creation to auto-delete the entire stack
 
 Resources:
+  SchedulerExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${AWS::StackName}-scheduler-delete-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: delete-this-stack
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:DeleteStack
+                Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}/*'
+
+  AutoDeleteFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${AWS::StackName}-autodelete-lambda-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: lambda-logs-and-scheduler
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - scheduler:CreateSchedule
+                  - scheduler:UpdateSchedule
+                  - scheduler:DeleteSchedule
+                  - scheduler:GetSchedule
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: !GetAtt SchedulerExecutionRole.Arn
+
+  AutoDeleteFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-autodelete-manager'
+      Runtime: python3.12
+      Handler: index.handler
+      Timeout: 60
+      Role: !GetAtt AutoDeleteFunctionRole.Arn
+      Code:
+        ZipFile: |
+          import json
+          import urllib.request
+          import boto3
+          from datetime import datetime, timedelta, timezone
+
+          scheduler = boto3.client("scheduler")
+
+          def send_response(event, context, status, data, physical_id=None, reason=None):
+              response_body = {
+                  "Status": status,
+                  "Reason": reason or f"See CloudWatch Log Stream: {context.log_stream_name}",
+                  "PhysicalResourceId": physical_id or context.log_stream_name,
+                  "StackId": event["StackId"],
+                  "RequestId": event["RequestId"],
+                  "LogicalResourceId": event["LogicalResourceId"],
+                  "Data": data
+              }
+              body = json.dumps(response_body).encode("utf-8")
+              req = urllib.request.Request(
+                  event["ResponseURL"],
+                  data=body,
+                  headers={"content-type": "", "content-length": str(len(body))},
+                  method="PUT"
+              )
+              with urllib.request.urlopen(req) as resp:
+                  resp.read()
+
+          def schedule_name(stack_name):
+              base = f"{stack_name}-auto-delete"
+              return base[:64]
+
+          def handler(event, context):
+              props = event.get("ResourceProperties", {})
+              stack_name = props["StackName"]
+              stack_id = props["StackId"]
+              hours = int(props["AutoDeleteHours"])
+              role_arn = props["SchedulerRoleArn"]
+              name = schedule_name(stack_name)
+
+              try:
+                  request_type = event["RequestType"]
+
+                  if request_type in ("Create", "Update"):
+                      run_at = datetime.now(timezone.utc) + timedelta(hours=hours)
+                      expr = run_at.strftime("at(%Y-%m-%dT%H:%M:%S)")
+                      target = {
+                          "RoleArn": role_arn,
+                          "Arn": "arn:aws:scheduler:::aws-sdk:cloudformation:deleteStack",
+                          "Input": json.dumps({"StackName": stack_id})
+                      }
+
+                      try:
+                          scheduler.get_schedule(Name=name)
+                          scheduler.update_schedule(
+                              Name=name,
+                              FlexibleTimeWindow={"Mode": "OFF"},
+                              ScheduleExpression=expr,
+                              ScheduleExpressionTimezone="UTC",
+                              State="ENABLED",
+                              ActionAfterCompletion="DELETE",
+                              Target=target,
+                              Description=f"Auto-delete stack {stack_name}"
+                          )
+                      except scheduler.exceptions.ResourceNotFoundException:
+                          scheduler.create_schedule(
+                              Name=name,
+                              FlexibleTimeWindow={"Mode": "OFF"},
+                              ScheduleExpression=expr,
+                              ScheduleExpressionTimezone="UTC",
+                              State="ENABLED",
+                              ActionAfterCompletion="DELETE",
+                              Target=target,
+                              Description=f"Auto-delete stack {stack_name}"
+                          )
+
+                      send_response(
+                          event,
+                          context,
+                          "SUCCESS",
+                          {
+                              "ScheduleName": name,
+                              "DeleteAtUtc": run_at.isoformat()
+                          },
+                          physical_id=name
+                      )
+
+                  elif request_type == "Delete":
+                      try:
+                          scheduler.delete_schedule(Name=name)
+                      except scheduler.exceptions.ResourceNotFoundException:
+                          pass
+
+                      send_response(
+                          event,
+                          context,
+                          "SUCCESS",
+                          {"ScheduleName": name},
+                          physical_id=name
+                      )
+
+              except Exception as e:
+                  send_response(
+                      event,
+                      context,
+                      "FAILED",
+                      {"Error": str(e)},
+                      physical_id=name,
+                      reason=str(e)
+                  )
+
+  AutoDeleteCustomResource:
+    Type: AWS::CloudFormation::CustomResource
+    Properties:
+      ServiceToken: !GetAtt AutoDeleteFunction.Arn
+      StackName: !Ref AWS::StackName
+      StackId: !Ref AWS::StackId
+      AutoDeleteHours: !Ref AutoDeleteHours
+      SchedulerRoleArn: !GetAtt SchedulerExecutionRole.Arn
+
   TurtiniDemoInstance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-0c02fb55956c7d316
       InstanceType: !Ref InstanceType
-      InstanceInitiatedShutdownBehavior: terminate
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          shutdown -h +${AutoTerminateMinutes}
       Tags:
         - Key: Name
           Value: turtini-demo-vm
@@ -38,4 +218,9 @@ Resources:
 
 Outputs:
   InstanceId:
+    Description: EC2 instance ID
     Value: !Ref TurtiniDemoInstance
+
+  AutoDeleteHoursConfigured:
+    Description: Hours until automatic stack deletion
+    Value: !Ref AutoDeleteHours
