@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Turtini Training Loop EC2 Demo
+Description: Turtini Training Loop EC2 Demo with auto-terminate
 
 Parameters:
   InstanceType:
@@ -9,16 +9,25 @@ Parameters:
       - t3.micro
       - t3.small
       - t3.medium
-    Description: EC2 instance type for the demo
+
+  AutoTerminateMinutes:
+    Type: Number
+    Default: 240
+    MinValue: 30
+    MaxValue: 1440
+    Description: Minutes before the demo instance shuts down and terminates itself
 
 Resources:
-
   TurtiniDemoInstance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-0c02fb55956c7d316
       InstanceType: !Ref InstanceType
-
+      InstanceInitiatedShutdownBehavior: terminate
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          shutdown -h +${AutoTerminateMinutes}
       Tags:
         - Key: Name
           Value: turtini-demo-vm
@@ -28,11 +37,5 @@ Resources:
           Value: Demo
 
 Outputs:
-
   InstanceId:
-    Description: Instance ID
     Value: !Ref TurtiniDemoInstance
-
-  AvailabilityZone:
-    Description: AZ
-    Value: !GetAtt TurtiniDemoInstance.AvailabilityZone
